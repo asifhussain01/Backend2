@@ -4,6 +4,7 @@ import {  User} from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
+
 const registerUser =asyncHandler (async(req,res)=>{
     //get user details from frontend
     //validation - not empty
@@ -16,8 +17,12 @@ const registerUser =asyncHandler (async(req,res)=>{
     //return res
 
     //get user details from frontend
-    const {usename,email,fullname,password}=req.body
+    const {username,email,fullname,password}=req.body
+    console.log("username",username);
     console.log("email",email);
+    console.log("fullname",fullname)
+    console.log("password",password)
+
 
 //validation - not empty
      //method 1
@@ -29,15 +34,15 @@ const registerUser =asyncHandler (async(req,res)=>{
     //methode 2
 
     if (
-        [fullname,email,username,password].some((field)=>field?.trim()==="")
+        [username,email,fullname,password].some((field)=>field?.trim()=="")
     ) {
         throw new ApiError(400,"All feilds are required");
     }
 
 
     //check if user already exists:username and email
-    const existedUser=User.findOne({
-        $or:[{usename},{email}]
+    const existedUser = await User.findOne({
+        $or:[{username},{email}]
     })
 
     if(existedUser){
@@ -47,18 +52,20 @@ const registerUser =asyncHandler (async(req,res)=>{
 
 
      //check for images ,check for avatar
-     const avatartLocalPath=req.files?.avatar[0]?.path
-     console.log("avatar is render",avatartLocalPath);
+     const avatarLocalPath = req.files?.avatar[0]?.path;
+    //  const avatarLocalPath = req.files?.avatar[0]?.path;
+     
+     console.log("avatar is render",avatarLocalPath);
 
      const coverImageLocalPath=req.files?.coverImage[0]?.path
 
-     if(!avatartLocalPath){
+     if(!avatarLocalPath){
         throw new ApiErrorError(400,"Avatar file is required");
      }
      
 
      //upload them cloudinary,check avatar 
-    const avatar= await uploadOnCloudinary(avatartLocalPath)
+    const avatar= await uploadOnCloudinary(avatarLocalPath)
     const coverImage = await uploadOnCloudinary(coverImageLocalPath)
 
     if(!avatar){
@@ -78,7 +85,7 @@ const registerUser =asyncHandler (async(req,res)=>{
     })
 
     //remove password and refresh token field from response
-    const createdUser=await user.findById(user._id).select(
+    const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"
     )
  //check for user creation
