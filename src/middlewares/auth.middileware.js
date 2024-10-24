@@ -15,9 +15,9 @@ export const verifyJWT = asyncHandler(async(req, res,next)=>{
                
             }
    
-       const decodedToken= jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
-       //ek database request marna chahta hu findbyId ka
-       const user= await User.findById(decodedToken?._Id).select("-password -refreshToken")
+       const decodedToken= await jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
+       //ek database request marna chahta hu findbyId ka //make sure karle id genrateAccessToken Wala hona chahiye
+       const user= await User.findById(decodedToken?._id).select("-password -refreshToken")
        
        if(!user){
            //next_video:discuss about frontend
