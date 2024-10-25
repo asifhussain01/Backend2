@@ -235,7 +235,7 @@ const refreshAccessToken= asyncHandler(async(req, res)=>{;
 
 
   try {
-      const decodedToken= await jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
+      const decodedToken=  jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
   
       // make sure karle id genrateAccessToken Wala hona chahiye
       const user= await User.findById(decodedToken?._id)
